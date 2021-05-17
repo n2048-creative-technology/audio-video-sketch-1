@@ -8,6 +8,8 @@ volatile boolean steper_pulse_state = LOW;
 
 volatile boolean run_mode = LOW;
 
+volatile int counter = 0;
+
 void setup() {
   cli();
   TCCR0A = 0;// set entire TCCR0A register to 0
@@ -29,9 +31,7 @@ void setup() {
   digitalWrite(stepperPulsePin, LOW);
 }
 
-
 void loop() {
-
 }
 
 ISR(TIMER0_COMPA_vect) { //timer0 interrupt 2kHz toggles pin 8
@@ -39,4 +39,9 @@ ISR(TIMER0_COMPA_vect) { //timer0 interrupt 2kHz toggles pin 8
   digitalWrite(stepperDirectionPin, HIGH);
   digitalWrite(stepperPulsePin, steper_pulse_state);
   digitalWrite(stepperEnablePin, run_mode);
+  counter ++;
+  if (counter > 2000) {
+    run_mode = !run_mode;
+    counter = 0;
+  }
 }
